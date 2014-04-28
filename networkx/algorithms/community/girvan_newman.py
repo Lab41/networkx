@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 import networkx as nx
+import networkx.utils.divisive as dv  
 import sys
 
 
@@ -14,8 +15,6 @@ def main():
     
     G = nx.gnm_random_graph(30,50)
     girvan_newman(G)
-    #bigclam(G)
-
 
 
 def girvan_newman(G, output="communities.txt"):
@@ -29,9 +28,7 @@ def girvan_newman(G, output="communities.txt"):
 
     '''
     
-    return nx.algorithms.community.divisive.do_divisive(G, 1, output)
-
-
+    dv.do_divisive(G,1,output)
 
 if __name__ == "__main__":
     main()

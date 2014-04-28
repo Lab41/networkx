@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 import networkx as nx
+import networkx.utils.divisive as dv
 import sys
 
 
@@ -28,10 +29,7 @@ def infomap(G, output="communities.txt"):
 
     '''
 
-    print dir(nx.algorithms.community)
-
-    return nx.algorithms.community.divisive_base.do_divisive(G, 3, output)
-
+    return dv.do_divisive(G, 3, output)
 
 
 if __name__ == "__main__":

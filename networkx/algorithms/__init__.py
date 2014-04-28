@@ -38,7 +38,6 @@ import networkx.algorithms.bipartite
 import networkx.algorithms.centrality
 import networkx.algorithms.cluster
 import networkx.algorithms.clique
-import networkx.algorithms.snapbase
 import networkx.algorithms.components
 import networkx.algorithms.connectivity
 import networkx.algorithms.flow

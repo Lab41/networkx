@@ -1,4 +1,3 @@
-#import snap
 import os
 import subprocess
 import tempfile
@@ -7,9 +6,6 @@ import sys
 
 
 __author__="""Paul M"""
-
-__all__ = ['bigclam', 'girvan_newman', "infomap", "clauset_newman_moore"]
-
 
 ENV_SNAPPATH_VAR = "SNAPHOME"
 
@@ -50,30 +46,3 @@ def setup(G):
 
     return (snap_home, filename, is_temp_file)
 
-
-def base_edge_cut(G, algo_id, output):
-
-    snap_home, graph_file, delete_file_after = setup(G)
-
-    if graph_file is None:
-        return
-
-    path_girvan_newman = os.path.join(snap_home, "examples", "community", "community")
-
-
-    try:
-        out = subprocess.Popen([path_girvan_newman, "-i:"+graph_file, "-o:"+output, "-a:1"]) 
-    except TypeError as e:
-        print "Error occurred: {}".format(e)
-        return
-    
-    out.wait()
-
-    if delete_file_after:
-        os.remove(graph_file)
-    
-
-
-
-if __name__ == "__main__":
-    main()

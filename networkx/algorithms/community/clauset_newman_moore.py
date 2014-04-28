@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 import networkx as nx
+import networkx.utils.divisive as dv
 import sys
 
 
@@ -14,10 +15,7 @@ __all__ = ['clauset_newman_moore']
 def main():
     
     G = nx.gnm_random_graph(30,50)
-    girvan_newman(G)
-    #bigclam(G)
-
-
+    clauset_newman_moore(G)
 
 
 def clauset_newman_moore(G, output="communities.txt"):
@@ -31,8 +29,7 @@ def clauset_newman_moore(G, output="communities.txt"):
 
     '''
     
-    return nx.algorithms.community.divisive.do_divisive(G, 2, output)
-
+    return dv.do_divisive(G, 2, output)
 
 
 if __name__ == "__main__":
