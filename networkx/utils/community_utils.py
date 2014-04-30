@@ -10,8 +10,20 @@ __author__="""Paul M"""
 __all__ = []
 
 
+def read_communities(f_name, G):
+    
+    comm_list = list()
 
-def do_divisive(G, algo_id, output):
+    with open(f_name, 'rb') as community_file:
+        for line in community_file:
+            comm_list.append(G.subgraph(map(int, line.split())))
+
+    return comm_list
+
+
+
+
+def divisive(G, algo_id, output):
 
     snap_home, graph_file, delete_file_after = nx.algorithms.snapbase.setup(G)
 
