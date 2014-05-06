@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 import networkx as nx
 import networkx.utils.snapbase as snap 
+import networkx.utils.community_utils as cu  
 import sys
 
 
@@ -58,6 +59,7 @@ def cesna(G,  f_attributes, f_attribute_names, data_prefix='snap_', nodes='', de
     if delete_file_after:
         os.remove(graph_file)
 
+    return cu.read_communities(data_prefix + "cmtyvv.txt", G)
 
 
 if __name__ == "__main__":

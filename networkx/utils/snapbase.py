@@ -15,6 +15,7 @@ def serialize_graph(G):
     
     f = tempfile.mkstemp()
     filename = f[1]
+
     try:
         nx.write_edgelist(G, filename, delimiter='\t', data=False)
     except:
@@ -40,9 +41,9 @@ def setup(G):
             filename = G
     else:
         filename  = serialize_graph(G)
+        is_temp_file = True
 
     if filename is None:
         print "Unable to serialize the graph"
 
     return (snap_home, filename, is_temp_file)
-

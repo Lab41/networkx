@@ -1,3 +1,4 @@
+from networkx.algorithms.community.metrics import *
 from networkx.algorithms.community.infomap import *
 from networkx.algorithms.community.coda import *
 from networkx.algorithms.community.girvan_newman import *

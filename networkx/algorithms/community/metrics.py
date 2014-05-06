@@ -66,7 +66,7 @@ class GraphStats:
         self.graph_degree = G.degree(G.nodes_iter())
         self.median_degree = np.median(list(self.graph_degree.values()))
         self.num_nodes = len(G)
-
+        self.num_edges = len(G.edges())
 
 class MetricCommunity:
     '''
@@ -92,22 +92,41 @@ class MetricCommunity:
         
         self.graph_stats = graph_stats
 
-    def simple_report(self):
+    def do_report(self, print_only=True, f=None):
         '''
         Prints metrics
         '''
-        print "Density:             {}".format(self.density())
-        print "Average Degree:      {}".format(self.avg_degree())
-        print "Frac Over Med Deg:   {}".format(self.fomd())
-        print "Tri Part Ratio:      {}".format(self.tpr())
-        print "Expansion:           {}".format(self.expansion())
-        print "Cut Ratio:           {}".format(self.cut_ratio())
-        print "Conductance:         {}".format(self.conductance())
-        print "Normalized Cut:      {}".format(self.normalized_cut())
-        print "Out Degree Frac:     {}".format(self.odf())
-        print "Max ODF:             {}".format(self.max_odf())
-        print "Avg ODF:             {}".format(self.abg_odf())
-        print "Separability:        {}".format(self.separability())
+
+        report =  """
+            nodes; {nodes}
+            Density:             {density}
+            Average Degree:      {avg_degree}
+            Frac Over Med Deg:   {fomd}
+            Tri Part Ratio:      {tpr}
+            Expansion:           {expansion}
+            Cut Ratio:           {cut_ratio}
+            Conductance:         {conductance}
+            Normalized Cut:      {normalized_cut}
+            Out Degree Frac:     {odf}
+            Separability:        {separability}
+        """.format( nodes=self.community.nodes(), 
+                    density=self.density(), 
+                    avg_degree=self.avg_degree(), 
+                    fomd=self.fomd(), 
+                    tpr=self.tpr(),  
+                    expansion=self.expansion(),
+                    cut_ratio=self.cut_ratio(),
+                    conductance=self.conductance(),
+                    normalized_cut=self.normalized_cut(),
+                    odf=self.odf(),
+                    separability=self.separability())
+
+        if print_only:
+            print report
+        elif f != None:
+            f.write(report)
+        else:
+            print "Error: Please provide a file to print report"
 
 
     def density(self):
@@ -176,7 +195,7 @@ class MetricCommunity:
         Normalized Cut Metric
         '''
 
-        return conductance_metric(self.num_edges_s, self.num_boundary_edges_s) + self.num_boundary_edges_s / ((2*(len(self.G.edges()) - self.num_edges_s)) + self.num_boundary_edges_s)
+        return self.conductance() + self.num_boundary_edges_s / ((2* self.graph_stats.num_edges - self.num_edges_s) + self.num_boundary_edges_s)
 
 
 
@@ -208,7 +227,7 @@ class MetricCommunity:
         return {"average":avg_odf, "flake":flake_odf, "max":max_odf}
 
 
-    def separability():
+    def separability(self):
         '''
         Measure ratio between the internal and the external number of edges of S
         '''
@@ -216,27 +235,52 @@ class MetricCommunity:
 
 
 
+def show_report(comm_metrics):
+    
+
+    for m in comm_metrics:
+        m.do_report()
+
+def save_report(comm_metrics, out):
+
+    with open(out, 'w') as out_f:
+        for m in comm_metrics:
+            m.do_report(f=out_f)
+
+    print "Community metrics report saved to {}".format(out)
 
 
+def run_analysis_from_file(communities_file):
+    
+    report_file = "report.txt"
+
+    communities = cu.read_communities("snap_cmtyvv.txt", G)  
+    comm_metrics = list()
+
+    for c in communities:
+        comm_metrics.append(MetricCommunity(c, graph_stats))
+       
+    save_report(comm_metrics, report_file) 
+
+    
 def main(argv):
 
     import networkx.utils.community_utils as cu 
     
     G = nx.gnm_random_graph(30,50) 
+    
+    nx.write_edgelist(G, "g.edgelist", delimiter="\t", data=False)
+    
     graph_stats = GraphStats(G)
     nx.bigclam(G)
 
-    communities = cu.read_communities("snap_cmtyvv.txt", G) 
-    
+    communities = cu.read_communities("snap_cmtyvv.txt", G)  
+    comm_metrics = list()
+
     for c in communities:
-        
-        m = MetricCommunity(c, graph_stats)
-
-        m.simple_report() 
-
-    pass
-
-
+        comm_metrics.append(MetricCommunity(c, graph_stats))
+       
+    save_report(comm_metrics, "report.txt") 
 
     
 
