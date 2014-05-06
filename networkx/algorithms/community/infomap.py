@@ -14,9 +14,14 @@ __all__ = ['infomap']
 
 def main():
     
-    G = nx.gnm_random_graph(30,50)
-    infomap(G)
+    G = nx.read_graphml('senate.graphml', node_type=int)
+    #G = nx.gnm_random_graph(30,50)
+    communities = infomap(G)
 
+    print "Num Communities: {}".format(len(communities))
+
+    for c in communities:
+        print c.nodes()
 
 def infomap(G, output="communities.txt"):
     '''
@@ -29,7 +34,7 @@ def infomap(G, output="communities.txt"):
 
     '''
 
-    return cu.divisive(G, 3, output)
+    return cu.divisive(G, '3', output)
 
 
 if __name__ == "__main__":

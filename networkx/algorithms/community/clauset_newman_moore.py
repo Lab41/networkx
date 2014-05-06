@@ -15,9 +15,13 @@ __all__ = ['clauset_newman_moore']
 def main():
     
     #G = nx.gnm_random_graph(30,50)
-    G = nx.read_graphml('senate.graphml')
+    G = nx.read_graphml('senate.graphml', node_type=int)
     communities = clauset_newman_moore(G)
+    
+    print "Num Communities: {}".format(len(communities))
 
+    for c in communities:
+        print c.nodes()
     #print "Num Comm: {}".format(len(communities)) 
 
 def clauset_newman_moore(G, output="communities.txt"):

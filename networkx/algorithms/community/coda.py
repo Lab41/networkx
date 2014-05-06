@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 import networkx as nx
 import networkx.utils.snapbase as snap 
+import networkx.utils.community_utils as cu
 import sys
 
 
@@ -14,8 +15,10 @@ __all__ = ['coda']
 def main():
     
     G = nx.gnm_random_graph(30,50)
-    coda(G)
+    communities = coda(G)
 
+    for c in communities:
+        print c.nodes()
 
 
 def coda(G, data_prefix='snap_', node_filepath='', graph_type=0, detect_comm=100, min_comm=5, max_comm=100, trials=10, threads=4, alpha=0.05, beta=0.3):
@@ -57,6 +60,7 @@ def coda(G, data_prefix='snap_', node_filepath='', graph_type=0, detect_comm=100
     if delete_file_after:
         os.remove(graph_file)
 
+    return cu.read_communities_by_community(data_prefix + "cmtyvv.txt", G)
 
 
 if __name__ == "__main__":

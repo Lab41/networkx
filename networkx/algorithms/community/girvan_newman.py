@@ -13,11 +13,14 @@ __all__ = ['girvan_newman']
 
 def main():
     
-    G = nx.gnm_random_graph(30,50)
+    #G = nx.gnm_random_graph(30,50)
+    G = nx.read_graphml('senate.graphml', node_type=int) 
     comm_list = girvan_newman(G)
 
     for c in comm_list:
         print c.nodes()
+
+
 
 def girvan_newman(G, output="communities.txt"):
     '''

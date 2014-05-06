@@ -1,14 +1,10 @@
-__author__ = 'aganesh'
+__author__ = 'aganesh, paulm'
 
 import networkx as nx
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-
-#Using undirected graph as model
-#Assuming nodes are ints but can easily be extended
-
 
 
 
@@ -92,7 +88,7 @@ class MetricCommunity:
         
         self.graph_stats = graph_stats
 
-    def do_report(self, print_only=True, f=None):
+    def do_report(self, f=None):
         '''
         Prints metrics
         '''
@@ -121,12 +117,10 @@ class MetricCommunity:
                     odf=self.odf(),
                     separability=self.separability())
 
-        if print_only:
-            print report
-        elif f != None:
+        if f:
             f.write(report)
         else:
-            print "Error: Please provide a file to print report"
+            print report
 
 
     def density(self):
@@ -250,38 +244,29 @@ def save_report(comm_metrics, out):
     print "Community metrics report saved to {}".format(out)
 
 
-def run_analysis_from_file(communities_file):
+def run_analysis(communities, G, report_file=None):
     
-    report_file = "report.txt"
-
-    communities = cu.read_communities("snap_cmtyvv.txt", G)  
     comm_metrics = list()
+
+    graph_stats = GraphStats(G)
 
     for c in communities:
         comm_metrics.append(MetricCommunity(c, graph_stats))
        
-    save_report(comm_metrics, report_file) 
+    if report_file:
+        save_report(comm_metrics, report_file) 
+    else:
+        show_report(comm_metrics)
 
-    
+
 def main(argv):
 
     import networkx.utils.community_utils as cu 
     
     G = nx.gnm_random_graph(30,50) 
-    
     nx.write_edgelist(G, "g.edgelist", delimiter="\t", data=False)
-    
-    graph_stats = GraphStats(G)
-    nx.bigclam(G)
-
-    communities = cu.read_communities("snap_cmtyvv.txt", G)  
-    comm_metrics = list()
-
-    for c in communities:
-        comm_metrics.append(MetricCommunity(c, graph_stats))
-       
-    save_report(comm_metrics, "report.txt") 
-
+    communities = nx.bigclam(G)
+    run_analysis(communities, G, "test.txt")
     
 
 if __name__ == "__main__":

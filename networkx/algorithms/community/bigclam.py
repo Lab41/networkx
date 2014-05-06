@@ -15,7 +15,7 @@ __all__ = ['bigclam']
 def main():
     
     #G = nx.gnm_random_graph(30,50)
-    G = nx.read_graphml('senate.graphml')
+    G = nx.read_graphml('senate.graphml', node_type=int)
     c_list = bigclam(G)
     
     print "Community-Centric"
@@ -23,9 +23,9 @@ def main():
         print c.nodes()
    
     
-    print "\nNode-Centric"
-    for n, d in G.nodes(data=True):
-        print "Node: {}  Communities: {}".format(n, d)
+    #print "\nNode-Centric"
+    #for n, d in G.nodes(data=True):
+    #    print "Node: {}  Communities: {}".format(n, d)
 
 def bigclam(G, data_prefix='snap_', node_filepath='', detect_comm=100, min_comm=5, max_comm=100, trials=10, threads=4, alpha=0.05, beta=0.3):
     '''
