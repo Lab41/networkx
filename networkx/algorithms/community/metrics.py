@@ -6,6 +6,63 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+def f1(communities, ground_truth, out):
+
+    out.write("Evaluating F1 score\n")
+    out.write("{} Communities in ground truth\n".format(len(ground_truth)))
+    out.write("{} Communities in results\n".format(len(communities)))
+
+    f1_sum_0 = sum([get_highest_f1(x, communities) for x in ground_truth])
+    f1_sum_1 = sum([get_highest_f1(x, ground_truth) for x in communities])
+    
+    final_score = .5 * (  1.0/float(len(ground_truth)) * f1_sum_0 + 1.0/float(len(communities)) * f1_sum_1)
+    
+    print out.write("F1 Score: {}\n".format(final_score))
+    
+
+
+
+def get_highest_f1(src_community, community_list):
+    """
+    Find the best matching community in the list using f1, then return highest score 
+
+    :param src_community:   community to base search on
+    :param community_list:  list of communities to search in 
+    """
+    
+    max_f1 = 0.0
+
+    for matchee in community_list:
+        score = f1_score(src_community, matchee)
+        if score > max_f1:
+            max_f1 = score
+    
+    return max_f1
+
+
+
+def f1_score(community_a, community_b):
+    """
+    according to http://en.wikipedia.org/wiki/F1_score
+    
+    F_1 = 2 * (precision * recall) / (precision + recall)
+    
+    where precision = #matched / len (set_a)
+          recall = #matched / len(set_b)
+    """
+
+    intersect_set = set(community_a).intersection(community_b)
+    overlap_len = len(intersect_set)
+   
+    if overlap_len > 0:
+        precision = float(overlap_len) / float(len(community_a))
+        recall = float(overlap_len) / float(len(community_b))
+        return 2.0 * (precision * recall) /  (precision + recall)
+    else:
+        return 0.0
+
+
+
 
 
 def test_separability(communities, G):
@@ -229,35 +286,43 @@ class MetricCommunity:
 
 
 
-def show_report(comm_metrics):
+def show_report(comm_metrics, f):
     
-
     for m in comm_metrics:
-        m.do_report()
-
-def save_report(comm_metrics, out):
-
-    with open(out, 'w') as out_f:
-        for m in comm_metrics:
-            m.do_report(f=out_f)
-
-    print "Community metrics report saved to {}".format(out)
+        m.do_report(f)
 
 
-def run_analysis(communities, G, report_file=None):
+
+def ground_truth_metrics(comms, ground_truth, G, out):
+   f1(comms, ground_truth, out) 
+
+
+
+
+def run_analysis(communities, G, ground_truth=None, report_file=None):
+    '''
+    Performs analysis on communities and optionally ground truth
+
+    '''
     
-    comm_metrics = list()
+    print "Running metrics analysis"
 
+    if report_file:
+        out = open(report_file, 'w')
+    else: 
+        out = sys.stdout
+
+
+    comm_metrics = list()
     graph_stats = GraphStats(G)
 
     for c in communities:
         comm_metrics.append(MetricCommunity(c, graph_stats))
-       
-    if report_file:
-        save_report(comm_metrics, report_file) 
-    else:
-        show_report(comm_metrics)
-
+            
+    show_report(comm_metrics, report_file)
+    
+    if ground_truth:
+        f1(communities, ground_truth, out)    
 
 def main(argv):
 
@@ -266,7 +331,7 @@ def main(argv):
     G = nx.gnm_random_graph(30,50) 
     nx.write_edgelist(G, "g.edgelist", delimiter="\t", data=False)
     communities = nx.bigclam(G)
-    run_analysis(communities, G, "test.txt")
+    run_analysis(communities, G)
     
 
 if __name__ == "__main__":
