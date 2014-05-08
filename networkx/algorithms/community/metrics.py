@@ -145,7 +145,7 @@ class MetricCommunity:
         
         self.graph_stats = graph_stats
 
-    def do_report(self, f=None):
+    def do_report(self, f):
         '''
         Prints metrics
         '''
@@ -174,11 +174,7 @@ class MetricCommunity:
                     odf=self.odf(),
                     separability=self.separability())
 
-        if f:
-            f.write(report)
-        else:
-            print report
-
+        f.write(report)
 
     def density(self):
         '''
@@ -287,11 +283,45 @@ class MetricCommunity:
 
 
 def show_report(comm_metrics, f):
-    
+   
+    f.write("===== Metrics Description =====\n\n")
+    f.write("Density\n")
+    f.write(MetricCommunity.density.__doc__)
+    f.write("\n")
+    f.write("Average Degree\n")
+    f.write(MetricCommunity.avg_degree.__doc__)
+    f.write("\n")
+    f.write("Fraction Over Median Degree (FOMD)")
+    f.write(MetricCommunity.fomd.__doc__)
+    f.write("\n")
+    f.write("Triangle Participation Ratio (TRP)")
+    f.write(MetricCommunity.tpr.__doc__)
+    f.write("\n")
+    f.write("Expansion")
+    f.write(MetricCommunity.expansion.__doc__)  
+    f.write("\n")
+    f.write("Cut-Ratio")
+    f.write(MetricCommunity.cut_ratio.__doc__)
+    f.write("\n")
+    f.write("Conductance")
+    f.write(MetricCommunity.conductance.__doc__)
+    f.write("\n")
+    f.write("Normalized Cut")
+    f.write(MetricCommunity.normalized_cut.__doc__)
+    f.write("\n")
+    f.write("Out Degree Fraction (odf)")
+    f.write(MetricCommunity.odf.__doc__)
+    f.write("\n")
+    f.write("Separability")
+    f.write(MetricCommunity.separability.__doc__)
+    f.write("\n")
+    f.write("\n\n")
+    f.write("===== Community Metrics =====")
     for m in comm_metrics:
+        pass
         m.do_report(f)
 
-
+    f.write("\n\n")
 
 def ground_truth_metrics(comms, ground_truth, G, out):
    f1(comms, ground_truth, out) 
@@ -319,7 +349,7 @@ def run_analysis(communities, G, ground_truth=None, report_file=None):
     for c in communities:
         comm_metrics.append(MetricCommunity(c, graph_stats))
             
-    show_report(comm_metrics, report_file)
+    show_report(comm_metrics, out)
     
     if ground_truth:
         f1(communities, ground_truth, out)    
