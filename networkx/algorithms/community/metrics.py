@@ -145,10 +145,18 @@ class MetricCommunity:
         
         self.graph_stats = graph_stats
 
-    def do_report(self, f):
-        '''
-        Prints metrics
-        '''
+        self.density = self.do_density()
+        self.avg_degree = self.do_avg_degree()
+        self.fomd = self.do_fomd()
+        self.tpr = self.do_tpr()
+        self.expansion = self.do_expansion()
+        self.cut_ratio = self.do_cut_ratio()
+        self.conductance = self.do_conductance()
+        self.normalized_cut = self.do_normalized_cut()
+        self.odf = self.do_odf()
+        self.separability = self.do_separability()
+        
+    def __str__(self):
 
         report =  """
             nodes; {nodes}
@@ -163,36 +171,36 @@ class MetricCommunity:
             Out Degree Frac:     {odf}
             Separability:        {separability}
         """.format( nodes=self.community.nodes(), 
-                    density=self.density(), 
-                    avg_degree=self.avg_degree(), 
-                    fomd=self.fomd(), 
-                    tpr=self.tpr(),  
-                    expansion=self.expansion(),
-                    cut_ratio=self.cut_ratio(),
-                    conductance=self.conductance(),
-                    normalized_cut=self.normalized_cut(),
-                    odf=self.odf(),
-                    separability=self.separability())
+                    density=self.density, 
+                    avg_degree=self.avg_degree, 
+                    fomd=self.fomd, 
+                    tpr=self.tpr,  
+                    expansion=self.expansion,
+                    cut_ratio=self.cut_ratio,
+                    conductance=self.conductance,
+                    normalized_cut=self.normalized_cut,
+                    odf=self.odf,
+                    separability=self.separability)
 
-        f.write(report)
+        return report
 
-    def density(self):
+    def do_density(self):
         '''
         Calculates the internal edge density of the community
         
         Equation:  num_internal_edges / max_edges_possible
         '''
-        return float(self.num_edges_s / ((self.num_nodes_s*(self.num_nodes_s - 1)) / 2))
 
+        return  float(self.num_edges_s / ((self.num_nodes_s*(self.num_nodes_s - 1)) / 2))
 
-    def avg_degree(self):
+    def do_avg_degree(self):
         '''
         Calculates the average internal degree of the nodes in the community
         '''
+        
         return (2 * self.num_edges_s) / self.num_nodes_s
 
-
-    def fomd(self):
+    def do_fomd(self):
         '''
         Fraction of nodes of S that have internal degree higher than the median degree value of entire set of graph nodes    
         '''
@@ -201,7 +209,7 @@ class MetricCommunity:
         return fomd
 
 
-    def tpr(self):
+    def do_tpr(self):
         '''
         Triangle Participation Ratio (TPR) is the fraction of nodes in S that belong to a triad
         Dictionary where nodes are the keys and values are the number of triangles that include the node as a vertex
@@ -213,21 +221,21 @@ class MetricCommunity:
         tpr = tri_count / self.num_nodes_s
         return tpr
 
-    def expansion(self):
+    def do_expansion(self):
         '''
         Measures the number of edges per node that point outside the cluster
         '''
         return self.num_boundary_edges_s/self.num_nodes_s
 
 
-    def cut_ratio(self):
+    def do_cut_ratio(self):
         '''     
         Fraction of existing edges leaving the cluster
         '''
         return self.num_boundary_edges_s / (self.num_nodes_s * (self.graph_stats.num_nodes - self.num_nodes_s))
 
 
-    def conductance(self):
+    def do_conductance(self):
         '''
         Measures the fraction of total edge volume that points outside the cluster
         
@@ -237,16 +245,16 @@ class MetricCommunity:
         return self.num_boundary_edges_s / ((2 * self.num_edges_s) + self.num_boundary_edges_s)
 
 
-    def normalized_cut(self):
+    def do_normalized_cut(self):
         '''
         Normalized Cut Metric
         '''
 
-        return self.conductance() + self.num_boundary_edges_s / ((2* self.graph_stats.num_edges - self.num_edges_s) + self.num_boundary_edges_s)
+        return self.do_conductance() + self.num_boundary_edges_s / ((2* self.graph_stats.num_edges - self.num_edges_s) + self.num_boundary_edges_s)
 
 
 
-    def odf(self):
+    def do_odf(self):
         '''
         Out Degree Fraction
 
@@ -274,7 +282,7 @@ class MetricCommunity:
         return {"average":avg_odf, "flake":flake_odf, "max":max_odf}
 
 
-    def separability(self):
+    def do_separability(self):
         '''
         Measure ratio between the internal and the external number of edges of S
         '''
@@ -286,40 +294,59 @@ def show_report(comm_metrics, f):
    
     f.write("===== Metrics Description =====\n\n")
     f.write("Density\n")
-    f.write(MetricCommunity.density.__doc__)
+    f.write(MetricCommunity.do_density.__doc__)
     f.write("\n")
     f.write("Average Degree\n")
-    f.write(MetricCommunity.avg_degree.__doc__)
+    f.write(MetricCommunity.do_avg_degree.__doc__)
     f.write("\n")
     f.write("Fraction Over Median Degree (FOMD)")
-    f.write(MetricCommunity.fomd.__doc__)
+    f.write(MetricCommunity.do_fomd.__doc__)
     f.write("\n")
-    f.write("Triangle Participation Ratio (TRP)")
-    f.write(MetricCommunity.tpr.__doc__)
+    f.write("Triangle Participation Ratio (TPR)")
+    f.write(MetricCommunity.do_tpr.__doc__)
     f.write("\n")
     f.write("Expansion")
-    f.write(MetricCommunity.expansion.__doc__)  
+    f.write(MetricCommunity.do_expansion.__doc__)  
     f.write("\n")
     f.write("Cut-Ratio")
-    f.write(MetricCommunity.cut_ratio.__doc__)
+    f.write(MetricCommunity.do_cut_ratio.__doc__)
     f.write("\n")
     f.write("Conductance")
-    f.write(MetricCommunity.conductance.__doc__)
+    f.write(MetricCommunity.do_conductance.__doc__)
     f.write("\n")
     f.write("Normalized Cut")
-    f.write(MetricCommunity.normalized_cut.__doc__)
+    f.write(MetricCommunity.do_normalized_cut.__doc__)
     f.write("\n")
     f.write("Out Degree Fraction (odf)")
-    f.write(MetricCommunity.odf.__doc__)
+    f.write(MetricCommunity.do_odf.__doc__)
     f.write("\n")
     f.write("Separability")
-    f.write(MetricCommunity.separability.__doc__)
+    f.write(MetricCommunity.do_separability.__doc__)
     f.write("\n")
     f.write("\n\n")
-    f.write("===== Community Metrics =====")
+    f.write("#################### Community Metrics #########################\n\n")
+   
+    f.write("=====Averages Metrics====\n") 
+    f.write("Density..................{}\n".format(sum(c.density for c in comm_metrics)/len(comm_metrics)))
+    f.write("Avg_degree.............. {}\n".format(sum(c.avg_degree for c in comm_metrics)/len(comm_metrics)))
+    f.write("FOMD.................... {}\n".format(sum(c.fomd for c in comm_metrics)/len(comm_metrics)))
+    f.write("TPR......................{}\n".format(sum(c.tpr for c in comm_metrics)/len(comm_metrics)))
+    f.write("Expansion................{}\n".format(sum(c.expansion for c in comm_metrics)/len(comm_metrics)))
+    f.write("Cut-Ratio................{}\n".format(sum(c.cut_ratio for c in comm_metrics)/len(comm_metrics)))
+    f.write("Conductance..............{}\n".format(sum(c.conductance for c in comm_metrics)/len(comm_metrics)))
+    f.write("Normalized Cut...........{}\n".format(sum(c.normalized_cut for c in comm_metrics)/len(comm_metrics)))
+    #f.write("ODF......................{}".format(sum(c.odf for c in comm_metrics)/len(comm_metrics)))
+    f.write("Separability.............{}\n".format(sum(c.separability for c in comm_metrics)/len(comm_metrics)))
+    f.write("\n\n")
+
+
+
+
+
+
+
     for m in comm_metrics:
-        pass
-        m.do_report(f)
+        f.write("{}".format(m))
 
     f.write("\n\n")
 
