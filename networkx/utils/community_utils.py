@@ -110,6 +110,25 @@ def divisive(G, algo_id, output):
 
 
 
+def display_communities(comms, G):
+    from random import random
+    import matplotlib.pyplot as plt
+    
+    print "Displaying"
+    
 
+    pos = nx.fruchterman_reingold_layout(G, k=2)
+
+    #pos=nx.spring_layout(G) # positions for all nodes
+
+    colors = [(random(), random(), random()) for _i in range(len(comms))]
+
+    comm_id = 0
+    for c in comms:
+        nx.draw_networkx_nodes(G, pos, c.nodes(), node_color=colors[comm_id], node_size=60, alpha=0.8)
+        comm_id+=1 
+    nx.draw_networkx_edges(G, pos, G.edges(), width=1, alplha=0.5, edge_color='grey')
+
+    plt.show()
 
 
