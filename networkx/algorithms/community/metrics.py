@@ -111,7 +111,93 @@ def test_separability(communities, G):
     plt.ylabel("Separability")
     plt.show()
 
+
+
+import operator
+
+def graph_goodness2(comm_metrics):
     
+
+    metrics = [(c.conductance, c.density, c.avg_degree, c.fomd, c.tpr, c.expansion, c.cut_ratio, c.normalized_cut) for c in comm_metrics] 
+    
+    metrics_sorted = metrics.sort(key=lambda x: x[0], reverse=True)
+
+    c, d, a, f, t, e, cr, n  = zip(*metrics)
+
+    plt.subplot(331)
+    plt.plot(c)
+    plt.title("Conductance")
+    plt.subplot(332)
+    plt.plot(d)
+    plt.title("Density")
+    plt.subplot(333)
+    plt.plot(a)
+    plt.title("Average Degree")
+    plt.subplot(334)
+    plt.plot(f)
+    plt.title("FOMD")
+    plt.subplot(335)
+    plt.plot(t)
+    plt.title("TPR")
+    plt.subplot(336)
+    plt.plot(e)
+    plt.title("Expansion")
+    plt.subplot(337)
+    plt.plot(cr) 
+    plt.title("Cut Ratio")
+    plt.subplot(338)
+    plt.plot(n)
+    plt.title("Normalized Cut")
+
+
+    plt.show()
+
+
+
+    
+
+def graph_goodness(comm_metrics):
+
+    plt.subplot(331) 
+    plt.plot(sorted([c.density for c in comm_metrics ], reverse=True))
+    plt.ylabel("Density")
+    
+    plt.subplot(332)
+    plt.plot(sorted([c.avg_degree for c in comm_metrics ], reverse=True))
+    plt.ylabel("Average Degree")
+
+    plt.subplot(333)
+    plt.plot(sorted([c.fomd for c in comm_metrics ], reverse=True))
+    plt.ylabel("FOMD")
+
+    plt.subplot(334)
+    plt.plot(sorted([c.tpr for c in comm_metrics ], reverse=True))
+    plt.ylabel("TPR")
+
+    plt.subplot(335)
+    plt.plot(sorted([c.expansion for c in comm_metrics ], reverse=True))
+    plt.ylabel("Expansion")
+    
+    plt.subplot(336)
+    plt.plot(sorted([c.cut_ratio for c in comm_metrics ], reverse=True))
+    plt.ylabel("Cut-Ratio")
+    
+    plt.subplot(337)
+    plt.plot(sorted([c.conductance for c in comm_metrics ], reverse=True))
+    plt.ylabel("Conductance")
+  
+    plt.subplot(338)
+    plt.plot(sorted([c.normalized_cut for c in comm_metrics ], reverse=True))
+    plt.ylabel("Normalized Cut")
+
+    plt.subplot(339)
+    plt.plot(sorted([c.separability for c in comm_metrics ], reverse=True))
+    plt.ylabel("Separability")
+         
+    plt.show()
+
+
+
 class GraphStats:
 
     def __init__(self, G):
@@ -380,6 +466,11 @@ def run_analysis(communities, G, ground_truth=None, report_file=None):
     
     if ground_truth:
         f1(communities, ground_truth, out)    
+
+
+
+    graph_goodness2(comm_metrics) 
+
 
 def main(argv):
 
